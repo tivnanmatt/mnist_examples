@@ -134,7 +134,6 @@ if __name__ == '__main__':
     # if torch.cuda.device_count() > 1:
     #     print("Let's use", torch.cuda.device_count(), "GPUs!")
     #     model = torch.nn.DataParallel(model)
-        # batch_size = batch_size * torch.cuda.device_count()
 
     # create the data loaders
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
