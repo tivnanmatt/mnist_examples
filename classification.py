@@ -15,7 +15,6 @@ batch_size = 1024
 # define the learning_rate
 learning_rate = 1e-4
 
-
 # function to train the model
 def train(model, loss_fn, optimizer, train_loader, epochs=1):
 
@@ -79,9 +78,9 @@ def test(model, test_loader):
 model = Classifier().to(device)
 
 # uncomment below if multiple GPUs are available to use DataParallel
-if torch.cuda.device_count() > 1:
-    print("Let's use", torch.cuda.device_count(), "GPUs!")
-    model = torch.nn.DataParallel(model)
+# if torch.cuda.device_count() > 1:
+#     print("Let's use", torch.cuda.device_count(), "GPUs!")
+#     model = torch.nn.DataParallel(model)
 
 # create the data loaders
 train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
