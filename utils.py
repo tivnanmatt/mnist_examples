@@ -60,7 +60,7 @@ class MultiLayerPerceptron(torch.nn.Module):
         x = x.view(-1, self.channel_list[0])
 
         # apply each layer in self.layers to the input tensor
-        for iLayer in len(self.linear_layers):
+        for iLayer in range(len(self.linear_layers)):
             # linear part of the layer
             x = self.linear_layers[iLayer](x)
             # batch normalization
@@ -69,7 +69,7 @@ class MultiLayerPerceptron(torch.nn.Module):
             x = self.activation()(x)
 
         # reshape the output to the output shape
-        x = x.view(x_shape[:-1] + (self.channel_list[-1]))
+        x = x.view(x_shape[:-1] + (self.channel_list[-1],))
 
         return x
 

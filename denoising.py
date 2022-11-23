@@ -9,6 +9,18 @@ from utils import test_data
 # if a GPU is available, use it, otherwise use the CPU
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
+# define the batch size
+batch_size = 256
+
+# define the learning_rate
+learning_rate = 1e-4
+
+# load models?
+loadModels = False
+
+# save models?
+saveModels = True
+
 # function to train the model
 def train(model, loss_fn, optimizer, train_loader, epochs=1):
 
@@ -23,10 +35,8 @@ def train(model, loss_fn, optimizer, train_loader, epochs=1):
             X_noisy = X + 0.2 * torch.randn_like(X)
 
             # make a prediction
-            X_noisy = X_noisy.view(-1, 784)
-            X_pred = model(X_noisy)
-            X_noisy = X_noisy.view(X.shape)
-            X_pred = X_pred.view(X.shape)
+            noise_pred = model(X_noisy.view(-1, 784))
+            X_pred = X_noisy - noise_pred.view(X.shape)
 
             # compute the loss
             loss = loss_fn(X_pred, X)
@@ -63,7 +73,8 @@ def test(model, test_loader):
             X_noisy = X + 0.2 * torch.randn_like(X)
             
             # make a prediction
-            X_pred = model(X_noisy)
+            noise_pred = model(X_noisy.view(-1, 784))
+            X_pred = X_noisy - noise_pred.view(X.shape)
 
             # compute the mse running average for the model prediction
             mse_running_average = mse_running_average*(batch/(batch+1)) + torch.mean((X_pred - X)**2)*(1/(batch+1))
@@ -75,11 +86,6 @@ def test(model, test_loader):
             print(f'batch: {batch}, mse: {mse_running_average}, mse/mse_ref: {mse_running_average/mse_running_average_ref}')
 
 
-# define the batch size
-batch_size = 256
-
-# define the learning_rate
-learning_rate = 1e-4
 
 # define the denoiser model
 model = Denoiser().to(device)
@@ -99,9 +105,19 @@ loss_fn = torch.nn.MSELoss()
 # define an optimizer
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
+
+if loadModels:
+    model.load_state_dict(torch.load('weights/denoising.pt'))
+    optimizer.load_state_dict(torch.load('weights/denoising_opt.pt'))
+
 # keep training the model until 2 minutes have passed
 import time
 start_time = time.time()
 while time.time() - start_time < 120:
     train(model, loss_fn, optimizer, train_loader, epochs=1)
+
+if saveModels:
+    torch.save(model.state_dict(), 'weights/denoising.pt')
+    torch.save(optimizer.state_dict(), 'weights/denoising_opt.pt')
+
 test(model, test_loader)

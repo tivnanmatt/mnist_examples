@@ -15,6 +15,13 @@ batch_size = 1024
 # define the learning_rate
 learning_rate = 1e-4
 
+# load models?
+loadModels = False
+
+# save models?
+saveModels = True
+
+
 # function to train the model
 def train(model, loss_fn, optimizer, train_loader, epochs=1):
 
@@ -29,7 +36,7 @@ def train(model, loss_fn, optimizer, train_loader, epochs=1):
             y = y.to(device)
 
             # make a prediction
-            y_pred = model(X)
+            y_pred = model(X.view(-1, 784))
 
             # compute the loss
             loss = loss_fn(y_pred, y)
@@ -63,7 +70,6 @@ def test(model, test_loader):
             X = X.to(device)
             y = y.to(device)
             
-
             # make a prediction
             y_pred = model(X.view(-1, 784))
 
@@ -93,11 +99,19 @@ loss_fn = torch.nn.NLLLoss()
 # define an optimizer
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
+if loadModels:
+    model.load_state_dict(torch.load('weights/classification.pt'))
+    optimizer.load_state_dict(torch.load('weights/classification_opt.pt'))
+
 # keep training the model until 2 minutes have passed
 import time
 start_time = time.time()
 while time.time() - start_time < 120:
     train(model, loss_fn, optimizer, train_loader, epochs=1)
+
+if saveModels:
+    torch.save(model.state_dict(), 'weights/classification.pt')
+    torch.save(optimizer.state_dict(), 'weights/classification_opt.pt')
 
 # test the model
 test(model, test_loader)

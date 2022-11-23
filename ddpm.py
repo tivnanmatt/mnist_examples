@@ -14,10 +14,10 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 batch_size = 256
 
 # define the learning_rate
-learning_rate = 1e-5
+learning_rate = 1e-4
 
 # load models?
-loadModels = True
+loadModels = False
 
 # save models?
 saveModels = True
