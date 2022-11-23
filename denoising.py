@@ -128,7 +128,7 @@ if __name__ == '__main__':
     batch_size = 256
 
     # define the learning_rate
-    learning_rate = 1e-2
+    learning_rate = 1e-4
 
     # define the model
     model = Denoiser([1024, 1024, 1024]).to(device)
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     loss_fn = torch.nn.MSELoss()
 
 	# define an optimizer
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     # keep training the model until 2 minutes have passed
     import time

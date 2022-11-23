@@ -143,7 +143,7 @@ if __name__ == '__main__':
     loss_fn = torch.nn.NLLLoss()
 
 	# define an optimizer
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
     # keep training the model until 2 minutes have passed
     import time
