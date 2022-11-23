@@ -14,10 +14,10 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 batch_size = 256
 
 # define the learning_rate
-learning_rate = 1e-4
+learning_rate = 1e-5
 
 # load models?
-loadModels = False
+loadModels = True
 
 # save models?
 saveModels = True
@@ -49,7 +49,10 @@ def train(model, loss_fn, optimizer, train_loader, epochs=1):
             X_t = torch.sqrt(alpha_bar) * X + torch.sqrt(1 - alpha_bar)*noise
 
             # make a prediction
+            X_t = X_t.view(batch_size,784)
             noise_pred = model(X_t,t)
+            noise_pred = noise_pred.view(X.shape)
+            X_t = X_t.view(X.shape)
 
             # compute the loss
             loss = loss_fn(noise_pred, noise)
@@ -90,7 +93,8 @@ def test(model, batch_size, num_steps):
             alpha = alpha_bar/torch.exp(-5*(t-dt)) 
 
             # make a prediction
-            noise_pred = model.eval()(X_t,t)
+            noise_pred = model.eval()(X_t.view(-1,784),t)
+            noise_pred = noise_pred.view(X_t.shape)
 
             # update X_t
             X_t = (X_t - ((1-alpha)/torch.sqrt(1-alpha_bar)) * noise_pred)* (1/torch.sqrt(alpha))
@@ -128,10 +132,10 @@ if loadModels:
     model.load_state_dict(torch.load('weights/ddpm.pt'))
     optimizer.load_state_dict(torch.load('weights/ddpm_opt.pt'))
 
-train(model, loss_fn, optimizer, train_loader, epochs=1)
+train(model, loss_fn, optimizer, train_loader, epochs=10)
 
 if saveModels:
     torch.save(model.state_dict(), 'weights/ddpm.pt')
     torch.save(optimizer.state_dict(), 'weights/ddpm_opt.pt')
 
-test(model, batch_size, num_steps=128)
+test(model, batch_size, num_steps=512)

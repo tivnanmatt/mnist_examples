@@ -63,8 +63,9 @@ def test(model, test_loader):
             X = X.to(device)
             y = y.to(device)
             
+
             # make a prediction
-            y_pred = model(X)
+            y_pred = model(X.view(-1, 784))
 
             # compute the accuracy
             sum_correct += torch.sum(torch.argmax(y_pred, dim=1) == y)

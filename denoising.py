@@ -23,7 +23,10 @@ def train(model, loss_fn, optimizer, train_loader, epochs=1):
             X_noisy = X + 0.2 * torch.randn_like(X)
 
             # make a prediction
+            X_noisy = X_noisy.view(-1, 784)
             X_pred = model(X_noisy)
+            X_noisy = X_noisy.view(X.shape)
+            X_pred = X_pred.view(X.shape)
 
             # compute the loss
             loss = loss_fn(X_pred, X)
