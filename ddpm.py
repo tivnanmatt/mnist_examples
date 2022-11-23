@@ -256,7 +256,7 @@ if __name__ == '__main__':
     # uncomment below if multiple GPUs are available to use DataParallel
     if torch.cuda.device_count() > 1:
         print("Let's use", torch.cuda.device_count(), "GPUs!")
-        model = torch.nn.DataParallel(model)
+        model = torch.nn.DataParallel(model,device_ids=[0,1,2,3,4,5,6,7,8])
 
     # create the data loaders
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
@@ -268,10 +268,10 @@ if __name__ == '__main__':
 	# define an optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
-    # keep training the model until 30 seconds have passed
+    # keep training the model until 1000 seconds have passed
     import time
     start_time = time.time()
-    while time.time() - start_time < 30:
+    while time.time() - start_time < 1000:
         train(model, loss_fn, optimizer, train_loader, epochs=1)
     
-    test(model, batch_size, num_steps=16)
+    test(model, batch_size, num_steps=128)
