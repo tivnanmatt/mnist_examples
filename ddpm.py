@@ -16,6 +16,12 @@ batch_size = 256
 # define the learning_rate
 learning_rate = 1e-4
 
+# load models?
+loadModels = False
+
+# save models?
+saveModels = True
+
 
 # function to train the model
 def train(model, loss_fn, optimizer, train_loader, epochs=1):
