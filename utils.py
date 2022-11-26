@@ -65,8 +65,12 @@ class MultiLayerPerceptron(torch.nn.Module):
             x = self.linear_layers[iLayer](x)
             # batch normalization
             x = self.batchnorm_layers[iLayer](x)
-            # non-linear activation function
-            x = self.activation()(x)
+            # if its the last layer, apply the final activation function
+            if iLayer == len(self.linear_layers) - 1:
+                x = self.final_activation()(x)
+            # otherwise, apply the activation function
+            else:
+                x = self.activation()(x)
 
         # reshape the output to the output shape
         x = x.view(x_shape[:-1] + (self.channel_list[-1],))
